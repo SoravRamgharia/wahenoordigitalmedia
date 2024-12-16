@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{panel/base :: parent(~{::#content},~{::title},~{::script})}">
+
+<head>
+	<title>campaign List</title>
+</head>
+
+<body>
+
+
+	<div id="content"
+		class="enigma py-5 px-5 md:py-0 sm:px-8 md:px-0 before:content-[''] before:bg-gradient-to-b before:from-theme-1 before:to-theme-2 dark:before:from-darkmode-800 dark:before:to-darkmode-800 md:before:bg-none md:bg-slate-200 md:dark:bg-darkmode-800 before:fixed before:inset-0 before:z-[-1]">
+
+		<div data-th-replace="~{panel/navbar::navbar}"></div>
+
+		<!-- BEGIN: Content -->
+		<div
+			class="max-w-full md:max-w-none rounded-[30px] md:rounded-[35px_35px_0_0] px-4 md:px-[22px] min-w-0 min-h-screen bg-slate-100 flex-1 pb-10 mt-5 relative dark:bg-darkmode-700 before:content-[''] before:w-full before:h-px before:block">
+			<h2 class="intro-y mt-10 text-lg font-medium">Campaign List</h2>
+			<div class="mt-5 grid grid-cols-12 gap-6">
+				<div class="intro-y col-span-12 mt-2 flex flex-wrap items-center xl:flex-nowrap">
+					<div class="flex w-full sm:w-auto">
+						<div class="relative w-48 text-slate-500">
+							<input data-tw-merge="" id="searchInput" type="text" placeholder="Search..."
+								oninput="filterCampaigns()"
+								class="disabled:bg-slate-100 disabled:cursor-not-allowed dark:disabled:bg-darkmode-800/50 dark:disabled:border-transparent [&[readonly]]:bg-slate-100 [&[readonly]]:cursor-not-allowed [&[readonly]]:dark:bg-darkmode-800/50 [&[readonly]]:dark:border-transparent transition duration-200 ease-in-out text-sm border-slate-200 shadow-sm rounded-md placeholder:text-slate-400/90 focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus:border-primary focus:border-opacity-40 dark:bg-darkmode-800 dark:border-transparent dark:focus:ring-slate-700 dark:focus:ring-opacity-50 dark:placeholder:text-slate-500/80 group-[.form-inline]:flex-1 group-[.input-group]:rounded-none group-[.input-group]:[&:not(:first-child)]:border-l-transparent group-[.input-group]:first:rounded-l group-[.input-group]:last:rounded-r group-[.input-group]:z-10 !box w-48 pr-10">
+							<i data-tw-merge="" data-lucide="search"
+								class="stroke-1.5 absolute inset-y-0 right-0 my-auto mr-3 h-4 w-4"></i>
+						</div>
+						<select data-tw-merge="" id="searchType" onchange="filterCampaigns()"
+							class="disabled:bg-slate-100 disabled:cursor-not-allowed disabled:dark:bg-darkmode-800/50 [&[readonly]]:bg-slate-100 [&[readonly]]:cursor-not-allowed [&[readonly]]:dark:bg-darkmode-800/50 transition duration-200 ease-in-out text-sm border-slate-200 shadow-sm rounded-md py-2 px-3 pr-8 focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus:border-primary focus:border-opacity-40 dark:bg-darkmode-800 dark:border-transparent dark:focus:ring-slate-700 dark:focus:ring-opacity-50 group-[.form-inline]:flex-1 !box ml-2 w-48 xl:w-auto">
+							<option value="campaign">Campaigns</option>
+							<option value="geo">Target Geo</option>
+							<option value="revenueModel">Revenue Model</option>
+						</select>
+					</div>
+					<div class="mx-auto hidden text-slate-500 xl:block">
+						<div class="intro-y col-span-12 flex flex-wrap items-center sm:flex-row sm:flex-nowrap">
+							<div class="flex items-center">
+								<!-- Display the pagination range with dynamic entries count -->
+								<span th:text="'Showing ' + ${currentPage * pageSize + 1} + ' to ' + 
+						                        (${currentPage * pageSize + pageSize} > ${campaignCount} ? ${campaignCount} : ${currentPage * pageSize + pageSize}) + 
+						                        ' of ' + ${campaignCount} + ' entries'"></span>
+							</div>
+						</div>
+					</div>
+					<div class="mt-3 flex w-full flex-wrap items-center gap-y-3 xl:mt-0 xl:w-auto xl:flex-nowrap">
+						<!-- Export to Excel Button -->
+						<button data-tw-merge=""
+							class="transition duration-200 border inline-flex items-center justify-center py-2 px-3 rounded-md font-medium cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 [&:hover:not(:disabled)]:bg-opacity-90 [&:hover:not(:disabled)]:border-opacity-90 [&:not(button)]:text-center disabled:opacity-70 disabled:cursor-not-allowed bg-primary border-primary text-white dark:border-primary mr-2 shadow-md"
+							onclick="exportToExcel()">
+							<i data-tw-merge="" data-lucide="file-text" class="stroke-1.5 mr-2 h-4 w-4"></i>
+							Export to Excel
+						</button>
+
+						<!-- Import from Excel Button -->
+						<input type="file" id="fileInput" name="file" accept=".xlsx, .xls" style="display: none;" />
+						<button data-tw-merge=""
+							class="transition duration-200 border inline-flex items-center justify-center py-2 px-3 rounded-md font-medium cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 [&:hover:not(:disabled)]:bg-opacity-90 [&:hover:not(:disabled)]:border-opacity-90 [&:not(button)]:text-center disabled:opacity-70 disabled:cursor-not-allowed bg-primary border-primary text-white dark:border-primary mr-2 shadow-md"
+							onclick="triggerFileUpload()">
+							<i data-tw-merge="" data-lucide="file-text" class="stroke-1.5 mr-2 h-4 w-4"></i>
+							Import from Excel
+						</button>
+
+						<!-- Dropdown Menu -->
+						<div data-tw-merge="" data-tw-placement="bottom-end" class="dropdown relative">
+							<button data-tw-merge="" data-tw-toggle="dropdown" aria-expanded="false"
+								class="transition duration-200 border shadow-sm inline-flex items-center justify-center py-2 rounded-md font-medium cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 [&:hover:not(:disabled)]:bg-opacity-90 [&:hover:not(:disabled)]:border-opacity-90 [&:not(button)]:text-center disabled:opacity-70 disabled:cursor-not-allowed !box px-2">
+								<span class="flex h-5 w-5 items-center justify-center">
+									<i data-tw-merge="" data-lucide="plus" class="stroke-1.5 h-4 w-4"></i>
+								</span>
+							</button>
+							<div data-transition="" data-selector=".show"
+								class="dropdown-menu absolute z-[9999] hidden bg-white shadow-md rounded-md">
+
+								<div data-tw-merge=""
+									class="dropdown-content rounded-md border-transparent bg-white p-2 shadow-[0px_3px_10px_#00000017] dark:border-transparent dark:bg-darkmode-600 w-40">
+									<a onclick="printData()"
+										class="cursor-pointer flex items-center p-2 transition duration-300 ease-in-out rounded-md hover:bg-slate-200/60 dark:bg-darkmode-600 dark:hover:bg-darkmode-400 dropdown-item"><i
+											data-tw-merge="" data-lucide="printer" class="stroke-1.5 mr-2 h-4 w-4"></i>
+										Print</a>
+									<a onclick="exportToExcel()"
+										class="cursor-pointer flex items-center p-2 transition duration-300 ease-in-out rounded-md hover:bg-slate-200/60 dark:bg-darkmode-600 dark:hover:bg-darkmode-400 dropdown-item"><i
+											data-tw-merge="" data-lucide="file-text"
+											class="stroke-1.5 mr-2 h-4 w-4"></i>
+										Export to
+										Excel</a>
+									<a onclick="exportToPDF()"
+										class="cursor-pointer flex items-center p-2 transition duration-300 ease-in-out rounded-md hover:bg-slate-200/60 dark:bg-darkmode-600 dark:hover:bg-darkmode-400 dropdown-item"><i
+											data-tw-merge="" data-lucide="file-text"
+											class="stroke-1.5 mr-2 h-4 w-4"></i>
+										Export to
+										PDF</a>
+								</div>
+
+
+							</div>
+						</div>
+					</div>
+
+					<!-- Placeholder for Messages -->
+					<p id="responseMessage" style="margin-top: 20px;"></p>
+				</div>
+				<!-- BEGIN: Data List -->
+				<div class="intro-y col-span-12 overflow-auto">
+					<table class="w-full text-sm text-left border-separate border-spacing-y-1">
+						<thead>
+							<tr class="bg-gray-700 dark:bg-darkmode-700 text-black dark:text-white font-bold">
+								<th class="p-2 text-center">
+									<input type="checkbox"
+										class="cursor-pointer rounded border-gray-300 focus:ring-primary dark:bg-darkmode-700 dark:border-gray-500">
+								</th>
+								<th class="p-2 text-center">Logo</th>
+								<th class="p-2 text-center">Offer</th>
+								<th class="p-2 text-center">Revenue Model</th>
+								<th class="p-2 text-center">Model Type</th>
+								<th class="p-2 text-center">Revenue &nbsp;&nbsp;&nbsp; Payout</th>
+								<th class="p-2 text-center">Target Geo</th>
+								<th class="p-2 text-center">Options</th>
+								<th class="p-2 text-center">Status</th>
+							</tr>
+						</thead>
+						<tbody id="campaignData">
+							<tr class="bg-white dark:bg-darkmode-700 hover:bg-gray-50 dark:hover:bg-darkmode-600"
+								th:each="campaign : ${campaigns}">
+								<td class="p-2 text-center text-xs">
+									<input type="checkbox"
+										class="cursor-pointer rounded border-gray-300 focus:ring-primary dark:bg-darkmode-800">
+								</td>
+								<td class="p-2 text-center text-xs">
+									<div class="flex items-center">
+										<img th:src="${NULL}"
+											onerror="this.onerror=null; this.src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUS5tvKTZlE1BVeG0f11hR5VvjeJQ6zhqhTQ&s';"
+											class="w-16 h-8 object-cover border border-gray-200 shadow"
+											alt="Campaign Logo" />
+									</div>
+								</td>
+								<td class="p-2 text-center text-xs">
+									<div>
+										<a class="font-medium"
+											th:text="${campaign.campaignId + '-' + campaign.campaignName}"
+											href="#">12345</a>
+									</div>
+								</td>
+								<td class="p-2 text-center text-xs">
+									<a class="font-medium" th:text="${campaign.revenueModel}" href="#">revenueModel</a>
+								</td>
+								<td class="p-1 text-center align-middle">
+									<div class="flex justify-center">
+										<table class="table-auto text-xs text-left">
+											<tbody>
+												<tr>
+													<td class="px-2 text-gray-600">Platform</td>
+													<td class="text-gray-600">:</td>
+													<td class="px-2">
+														<a class="underline text-blue-500 hover:text-blue-700"
+															th:text="${campaign.platformType}" href="#"></a>
+													</td>
+												</tr>
+												<tr>
+													<td class="px-2 text-gray-600">Category</td>
+													<td class="text-gray-600">:</td>
+													<td class="px-2">
+														<a class="underline text-blue-500 hover:text-blue-700"
+															th:text="${campaign.categoryType}" href="#"></a>
+													</td>
+												</tr>
+												<tr>
+													<td class="px-2 text-gray-600">Vertical</td>
+													<td class="text-gray-600">:</td>
+													<td class="px-2">
+														<a class="underline text-blue-500 hover:text-blue-700"
+															th:text="${campaign.verticalType}" href="#"></a>
+													</td>
+												</tr>
+												<tr>
+													<td class="px-2 text-gray-600">Channel</td>
+													<td class="text-gray-600">:</td>
+													<td class="px-2">
+														<a class="underline text-blue-500 hover:text-blue-700"
+															th:text="${campaign.channelType}" href="#"></a>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</td>
+								<td class="p-2 text-center text-xs">
+									<div class="flex flex-row gap-5 items-center justify-center">
+										<a class="font-medium" th:text="${campaign.getAdvertiserPayout()}"
+											href="#">advertiser</a>
+										<span class="mx-2"></span>
+										<a class="font-medium" th:text="${campaign.getAffiliatePayout()}"
+											href="#">affiliate</a>
+									</div>
+								</td>
+								<td class="p-2 text-center text-xs">
+									<a class="font-medium" th:text="${campaign.targetGeography}"
+										href="#">targetGeography</a>
+								</td>
+								<td class="p-2 text-center text-xs">
+									<div>
+										<a class="flex justify-center text-blue-500 hover:underline" href="#">
+											<i class="stroke-1.5 mr-1 h-4 w-4" data-lucide="check-square"></i>
+
+											Option
+										</a>
+									</div>
+								</td>
+								<td class="p-2 text-center text-xs">
+									<div th:switch="${#strings.trim(campaign.status)}">
+										<span th:case="'ACTIVE'" class="flex justify-center text-green-500">
+											<i class="stroke-1.5 mr-1 h-4 w-4" data-lucide="check-square"></i>
+											<span th:text="${campaign.status}"></span>
+										</span>
+										<span th:case="'PENDING'" class="flex justify-center text-yellow-500">
+											<i class="stroke-1.5 mr-1 h-4 w-4" data-lucide="check-square"></i>
+											<span th:text="${campaign.status}"></span>
+										</span>
+										<span th:case="'INACTIVE'" class="flex justify-center text-gray-500">
+											<i class="stroke-1.5 mr-1 h-4 w-4" data-lucide="check-square"></i>
+											<span th:text="${campaign.status}"></span>
+										</span>
+										<span th:case="'EXPIRED'" class="flex justify-center text-red-500">
+											<i class="stroke-1.5 mr-1 h-4 w-4" data-lucide="check-square"></i>
+											<span th:text="${campaign.status}"></span>
+										</span>
+										<span th:case="*">
+											<i class="stroke-1.5 mr-1 h-4 w-4" data-lucide="check-square"></i>
+											Unknown
+										</span>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<h1 class="px-5 py-3 border-b dark:border-darkmode-300 text-center box w-full rounded-l-none rounded-r-none text-xl border-x-0 shadow-[5px_3px_5px_#00000005] first:rounded-l-[0.6rem] first:border-l last:rounded-r-[0.6rem] last:border-r dark:bg-darkmode-600 before:absolute before:inset-y-0 before:left-0 before:my-auto before:block before:h-8 before:w-px before:bg-slate-200 before:dark:bg-darkmode-400"
+						data-th-if="${pageContent.totalElements<=0}">
+						No result found
+					</h1>
+
+				</div>
+
+				<!-- END: Data List -->
+				<!-- BEGIN: Pagination -->
+				<div data-th-if="${pageContent.totalElements > 0}"
+					class="intro-y col-span-12 flex flex-wrap items-center sm:flex-row sm:flex-nowrap">
+					<nav class="w-full sm:mr-auto sm:w-auto">
+						<ul class="flex w-full mr-0 sm:mr-auto sm:w-auto">
+							<li data-th-unless="${pageContent.first}" class="flex-1 sm:flex-initial">
+								<a data-th-href="@{'/campaignlist?size='+${pageSize}+'&page=' + ${startPage-1}}"
+									class="transition duration-200 border items-center justify-center py-2 rounded-md cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 [&:hover:not(:disabled)]:bg-opacity-90 [&:hover:not(:disabled)]:border-opacity-90 [&:not(button)]:text-center disabled:opacity-70 disabled:cursor-not-allowed min-w-0 sm:min-w-[40px] shadow-none font-normal flex border-transparent text-slate-900 sm:mr-2 dark:text-slate-500 px-1 sm:px-3">
+									<i data-tw-merge="" data-lucide="chevrons-left" class="stroke-1.5 h-4 w-4"></i></a>
+							</li>
+
+							<li data-th-unless="${pageContent.first}" class="flex-1 sm:flex-initial">
+								<a data-th-href="@{'/campaignlist?size='+${pageSize}+'&page=' + ${pageContent.number-1}}"
+									class="transition duration-200 border items-center justify-center py-2 rounded-md cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 [&:hover:not(:disabled)]:bg-opacity-90 [&:hover:not(:disabled)]:border-opacity-90 [&:not(button)]:text-center disabled:opacity-70 disabled:cursor-not-allowed min-w-0 sm:min-w-[40px] shadow-none font-normal flex border-transparent text-slate-900 sm:mr-2 dark:text-slate-500 px-1 sm:px-3">
+									<i data-tw-merge="" data-lucide="chevron-left" class="stroke-1.5 h-4 w-4"></i>
+								</a>
+							</li>
+
+							<li data-th-if="${startPage > 1}" class="flex-1 sm:flex-initial">
+								<a data-th-href="@{'/campaignlist?size='+${pageSize}+'&page=0'}"
+									class="transition duration-200 border items-center justify-center py-2 rounded-md cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 [&:hover:not(:disabled)]:bg-opacity-90 [&:hover:not(:disabled)]:border-opacity-90 [&:not(button)]:text-center disabled:opacity-70 disabled:cursor-not-allowed min-w-0 sm:min-w-[40px] shadow-none font-normal flex border-transparent text-slate-900 sm:mr-2 dark:text-slate-500 px-1 sm:px-3">
+								</a>
+							</li>
+							<li data-th-if="${startPage > 2}" class="flex-1 sm:flex-initial">
+								<span
+									class="transition duration-200 border items-center justify-center py-2 rounded-md cursor-pointer min-w-0 sm:min-w-[40px] shadow-none font-normal flex border-transparent text-slate-900 sm:mr-2 dark:text-slate-500 px-1 sm:px-3">...</span>
+							</li>
+
+							<li data-th-each="index : ${#numbers.sequence(startPage - 1, endPage - 2)}"
+								class="flex-1 sm:flex-initial">
+								<a data-th-href="@{'/campaignlist?size='+${pageSize}+'&page='+${index}}"
+									data-th-classappend="${index == pageContent.number ? '!box dark:bg-darkmode-400' : ''}"
+									class="transition duration-200 border items-center justify-center py-2 rounded-md cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 [&:hover:not(:disabled)]:bg-opacity-90 [&:hover:not(:disabled)]:border-opacity-90 [&:not(button)]:text-center disabled:opacity-70 disabled:cursor-not-allowed min-w-0 sm:min-w-[40px] shadow-none font-normal flex border-transparent text-slate-900 sm:mr-2 dark:text-slate-500 px-1 sm:px-3">
+									<span data-th-text="${index + 1}"></span>
+								</a>
+							</li>
+
+							<li data-th-if="${endPage < totalPages - 1}" class="flex-1 sm:flex-initial">
+								<span
+									class="transition duration-200 border items-center justify-center py-2 rounded-md cursor-pointer min-w-0 sm:min-w-[40px] shadow-none font-normal flex border-transparent text-slate-900 sm:mr-2 dark:text-slate-500 px-1 sm:px-3">...</span>
+							</li>
+
+							<li class="flex-1 sm:flex-initial">
+								<a data-th-href="@{'/campaignlist?size='+${pageSize}+'&page=' + ${totalPages-1}}"
+									th:classappend="${totalPages - 1 == currentPage ? '!box dark:bg-darkmode-400' : ''}"
+									class="transition duration-200 border items-center justify-center py-2 rounded-md cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 [&:hover:not(:disabled)]:bg-opacity-90 [&:hover:not(:disabled)]:border-opacity-90 [&:not(button)]:text-center disabled:opacity-70 disabled:cursor-not-allowed min-w-0 sm:min-w-[40px] shadow-none font-normal flex border-transparent text-slate-900 sm:mr-2 dark:text-slate-500 px-1 sm:px-3">
+									<span data-th-text="${totalPages}"></span>
+								</a>
+							</li>
+
+							<li data-th-unless="${pageContent.last}" class="flex-1 sm:flex-initial">
+								<a data-th-href="@{'/campaignlist?size='+${pageSize}+'&page=' + ${pageContent.number + 1}}"
+									class="transition duration-200 border items-center justify-center py-2 rounded-md cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 [&:hover:not(:disabled)]:bg-opacity-90 [&:hover:not(:disabled)]:border-opacity-90 [&:not(button)]:text-center disabled:opacity-70 disabled:cursor-not-allowed min-w-0 sm:min-w-[40px] shadow-none font-normal flex border-transparent text-slate-900 sm:mr-2 dark:text-slate-500 px-1 sm:px-3">
+									<i data-tw-merge="" data-lucide="chevron-right" class="stroke-1.5 h-4 w-4"></i>
+								</a>
+							</li>
+
+							<li data-th-unless="${pageContent.last}" class="flex-1 sm:flex-initial">
+								<a data-th-href="@{'/campaignlist?size='+${pageSize}+'&page=' + ${totalPages - 1}}"
+									class="transition duration-200 border items-center justify-center py-2 rounded-md cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 [&:hover:not(:disabled)]:bg-opacity-90 [&:hover:not(:disabled)]:border-opacity-90 [&:not(button)]:text-center disabled:opacity-70 disabled:cursor-not-allowed min-w-0 sm:min-w-[40px] shadow-none font-normal flex border-transparent text-slate-800 sm:mr-2 dark:text-slate-300 px-1 sm:px-3"><i
+										data-tw-merge="" data-lucide="chevrons-right"
+										class="stroke-1.5 h-4 w-4"></i></a>
+							</li>
+						</ul>
+
+					</nav>
+
+					<select onchange="window.location.href=this.value" aria-label="Page size selection"
+						class="disabled:bg-slate-100 disabled:cursor-not-allowed disabled:dark:bg-darkmode-800/50 [&[readonly]]:bg-slate-100 [&[readonly]]:cursor-not-allowed [&[readonly]]:dark:bg-darkmode-800/50 transition duration-200 ease-in-out text-sm border-slate-200 shadow-sm rounded-md py-2 px-3 pr-8 focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus:border-primary focus:border-opacity-40 dark:bg-darkmode-800 dark:border-transparent dark:focus:ring-slate-700 dark:focus:ring-opacity-50 group-[.form-inline]:flex-1 !box mt-3 w-20 sm:mt-0">
+						<option value="/campaignlist?size=5&page=0" th:selected="${pageSize == 5}">5</option>
+						<option value="/campaignlist?size=10&page=0" th:selected="${pageSize == 10}">10</option>
+						<option value="/campaignlist?size=25&page=0" th:selected="${pageSize == 25}">25</option>
+						<option value="/campaignlist?size=50&page=0" th:selected="${pageSize == 50}">50</option>
+						<option value="/campaignlist?size=100&page=0" th:selected="${pageSize == 100}">100</option>
+						<option value="/campaignlist?size=250&page=0" th:selected="${pageSize == 250}">250</option>
+						<option value="/campaignlist?size=500&page=0" th:selected="${pageSize == 500}">500</option>
+						<option value="/campaignlist?size=1000&page=0" th:selected="${pageSize == 1000}">1000</option>
+					</select>
+				</div>
+
+			</div>
+			<!-- END: Pagination -->
+		</div>
+		<!-- END: Content -->
+		<script>
+			// Trigger file input when clicking the import button
+			function triggerFileUpload() {
+				document.getElementById("fileInput").click();
+			}
+
+			// Event listener for file input change
+			document.getElementById("fileInput").addEventListener("change", function () {
+				const file = this.files[0];
+
+				if (!file) {
+					alert("Please select a file.");
+					return;
+				}
+
+				const formData = new FormData();
+				formData.append("file", file);
+
+				fetch("/importcampaigns", {
+					method: "POST",
+					body: formData
+				})
+					.then(response => response.json())
+					.then(data => {
+						document.getElementById("responseMessage").textContent = data.message || "File imported successfully.";
+					})
+					.catch(error => {
+						document.getElementById("responseMessage").textContent = "Error: " + (error.message || "Failed to upload file.");
+					});
+			});
+
+			// Export to Excel
+			function exportToExcel() {
+				// Replace with actual export logic
+				alert("Export to Excel clicked.");
+			}
+
+			// Export to PDF
+			function exportToPDF() {
+				// Replace with actual export logic
+				alert("Export to PDF clicked.");
+			}
+
+			// Print data
+			function printData() {
+				// Replace with actual print logic
+				alert("Print clicked.");
+			}
+
+			// Initialize Lucide Icons 
+			lucide.createIcons();
+		</script>
+
+		<script src="https://cdn.jsdelivr.net/npm/lucide@latest"></script>
+
+		<script>
+
+			async function filterCampaigns() {
+				const searchType = document.getElementById('searchType').value; // Dropdown value
+				const searchValue = document.getElementById('searchInput').value.trim(); // Input value
+
+				try {
+					let url;
+
+					// If input is empty, fetch all campaigns
+					if (!searchValue) {
+						url = '/campaignlistjson'; // Backend endpoint to fetch all campaigns
+					} else {
+						// Fetch filtered campaigns
+						url = `/campaigns/searchtype?type=${encodeURIComponent(searchType)}&value=${encodeURIComponent(searchValue)}`;
+					}
+
+					const response = await fetch(url, {
+						method: 'GET',
+						headers: {
+							'Content-Type': 'application/json',
+						},
+					});
+
+					if (response.ok) {
+						const campaigns = await response.json();
+						updateCampaignTable(campaigns); // Update table rows
+					} else {
+						console.error('Failed to fetch campaigns:', response.status);
+					}
+				} catch (error) {
+					console.error('Error fetching campaigns:', error);
+				}
+			}
+
+			function updateCampaignTable(campaigns) {
+				const tbody = document.getElementById('campaignData');
+				tbody.innerHTML = ''; // Clear existing rows
+
+				if (campaigns.length === 0) {
+					tbody.innerHTML = `
+			            <tr>
+			                <td colspan="7" class="text-center text-gray-600">No results found</td>
+			            </tr>`;
+					return;
+				}
+
+				campaigns.forEach(campaign => {
+					const row = document.createElement('tr');
+					row.className = "bg-gradient-to-r from-white to-blue-50 hover:scale-[1.02] hover:shadow-xl hover:bg-gradient-to-r from-blue-300 to-blue-400 transition-all duration-300 ease-in-out border-b border-gray-300";
+					row.innerHTML = `
+						<td class="p-2 text-center text-xs">
+							<input type="checkbox"
+								class="cursor-pointer rounded border-gray-300 focus:ring-primary dark:bg-darkmode-800">
+						</td>
+			            <td class="p-1 text-center align-middle">
+			                <div class="flex justify-center items-center">
+			                    <img src="${null || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUS5tvKTZlE1BVeG0f11hR5VvjeJQ6zhqhTQ&s'}"
+			                         onerror="this.onerror=null; this.src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUS5tvKTZlE1BVeG0f11hR5VvjeJQ6zhqhTQ&s';"
+			                         class="w-16 h-8 object-cover border border-gray-200 shadow" alt="Campaign Logo" />
+			                </div>
+			            </td>
+			            <td class="p-1 text-center align-middle text-sm sm:text-xs">
+			                <a class="text-blue-700 font-medium hover:text-blue-900 break-words">${campaign.campaignId} - ${campaign.campaignName}</a>
+			            </td>
+						<td class="p-1 text-center align-middle">
+						    <a class="text-blue-700 font-medium hover:text-blue-900">${campaign.revenueModel}</a>
+						</td>
+			            <td class="p-1 text-center align-middle">
+			                <div class="flex justify-center">
+			                    <table class="table-auto text-xs text-left">
+			                        <tbody>
+			                            <tr>
+			                                <td class="px-2 text-gray-600">Platform</td>
+			                                <td class="text-gray-600">:</td>
+			                                <td class="px-2">
+			                                    <a class="underline text-blue-500 hover:text-blue-700">${campaign.platformType}</a>
+			                                </td>
+			                            </tr>
+			                            <tr>
+			                                <td class="px-2 text-gray-600">Category</td>
+			                                <td class="text-gray-600">:</td>
+			                                <td class="px-2">
+			                                    <a class="underline text-blue-500 hover:text-blue-700">${campaign.categoryType}</a>
+			                                </td>
+			                            </tr>
+			                            <tr>
+			                                <td class="px-2 text-gray-600">Vertical</td>
+			                                <td class="text-gray-600">:</td>
+			                                <td class="px-2">
+			                                    <a class="underline text-blue-500 hover:text-blue-700">${campaign.verticalType}</a>
+			                                </td>
+			                            </tr>
+			                            <tr>
+			                                <td class="px-2 text-gray-600">Channel</td>
+			                                <td class="text-gray-600">:</td>
+			                                <td class="px-2">
+			                                    <a class="underline text-blue-500 hover:text-blue-700">${campaign.channelType}</a>
+			                                </td>
+			                            </tr>
+			                        </tbody>
+			                    </table>
+			                </div>
+			            </td>
+			            <td class="p-1 text-center align-middle">
+			                <span class="text-gray-700 font-medium">${campaign.advertiserPayout}</span>
+									<span class="mx-2"></span>
+			                <span class="text-gray-700 font-medium">${campaign.affiliatePayout}</span>							
+			            </td>
+						<td class="p-1 text-center align-middle">
+						    <a class="text-blue-700 font-medium hover:text-blue-900">${campaign.targetGeography}</a>
+						</td>
+			            <td class="p-1 text-center align-middle">
+			                <span class="text-gray-700 font-medium">
+								<i class="stroke-1.5 mr-1 h-4 w-4" data-lucide="check-square"></i>
+								Option
+							</span>
+			            </td>
+			            <td class="p-1 mt-4 text-center align-middle flex justify-center">
+							${getStatusClass(campaign.status)}
+			            </td>
+			        `;
+					tbody.appendChild(row);
+				});
+			}
+
+			// Reinitialize Lucide icons
+
+			lucide.createIcons();
+
+			function getStatusClass(status) {
+				switch (status) {
+					case 'ACTIVE':
+						return `
+			                <span class="flex justify-center text-green-500">
+			                    <i class="stroke-1.5 mr-1 h-4 w-4" data-lucide="check-square"></i>
+			                    <span>${status}</span>
+			                </span>`;
+					case 'PENDING':
+						return `
+			                <span class="flex justify-center text-yellow-500">
+			                    <i class="stroke-1.5 mr-1 h-4 w-4" data-lucide="check-square"></i>
+			                    <span>${status}</span>
+			                </span>`;
+					case 'INACTIVE':
+						return `
+			                <span class="flex justify-center text-gray-500">
+			                    <i class="stroke-1.5 mr-1 h-4 w-4" data-lucide="check-square"></i>
+			                    <span>${status}</span>
+			                </span>`;
+					case 'EXPIRED':
+						return `
+			                <span class="flex justify-center text-red-500">
+			                    <i class="stroke-1.5 mr-1 h-4 w-4" data-lucide="check-square"></i>
+			                    <span>${status}</span>
+			                </span>`;
+					default:
+						return `
+			                <span class="flex justify-center text-gray-500">
+			                    <i class="stroke-1.5 mr-1 h-4 w-4" data-lucide="check-square"></i>
+			                    Unknown
+			                </span>`;
+				}
+			}
+
+		</script>
+
+	</div>
+
+
+</body>
+
+</html>

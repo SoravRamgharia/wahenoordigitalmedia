@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{panel/base :: parent(~{::#content},~{::title},~{::script})}">
+
+<head>
+	<title>Advertiser Form</title>
+</head>
+
+<body>
+
+	<div id="content"
+		class="enigma py-5 px-3 md:py-0 sm:px-8 md:px-0 before:content-[''] before:bg-gradient-to-b before:from-theme-1 before:to-theme-2 dark:before:from-darkmode-800 dark:before:to-darkmode-800 md:before:bg-none md:bg-slate-200 md:dark:bg-darkmode-800 before:fixed before:inset-0 before:z-[-1]">
+
+		<div data-th-replace="~{panel/navbar::navbar}"></div>
+
+		<!-- BEGIN: Content -->
+		<div
+			class="max-w-full md:max-w-none rounded-[30px] md:rounded-[35px_35px_0_0] px-4 md:px-[22px] min-w-0 min-h-screen bg-slate-100 flex-1 pb-10 mt-5 relative dark:bg-darkmode-700 before:content-[''] before:w-full before:h-px before:block">
+			<!-- BEGIN: Notification -->
+			<div role="alert"
+				class="mt-5 alert relative border rounded-md px-5 py-4 bg-primary border-primary text-white dark:border-primary pl-5 pr-16 intro-y box col-span-11 mb-6 dark:border-darkmode-600">
+				<div class="flex items-center">
+					<span>
+						<i data-tw-merge="" data-lucide="info" class="stroke-1.5 mr-2 h-4 w-4"></i>
+					</span>
+					<span>Please fill in the details correctly. Mandatory fields are marked with <super
+							class="text-red-600 ml-2 text-lg font-medium">*</super></span>
+
+					<button data-tw-merge="" data-tw-dismiss="alert" type="button" aria-label="Close"
+						class="py-2 px-3 absolute right-0 my-auto mr-2 text-white"><i data-tw-merge="" data-lucide="x"
+							class="stroke-1.5 h-4 w-4"></i></button>
+				</div>
+			</div>
+			<!-- BEGIN: Notification -->
+
+
+			<div class="intro-y col-span-11 2xl:col-span-9">
+				<div data-th-replace="~{message::messagebox}"></div>
+				<div class="flex justify-center items-center w-full">
+					<form class="bg-white shadow-xl rounded-2xl p-6 md:p-10 w-full space-y-6">
+						<text
+							class="justify-center text-sm sm:text-base md:text-lg lg:text-xl font-bold text-white text-center px-4 py-2 flex flex-nowrap bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-xl shadow-md animate-gradient">
+							Create New Affiliate
+						</text>
+
+						<div class="flex flex-col sm:flex-row sm:justify-between gap-x-4 sm:gap-x-8 lg:gap-x-16">
+							<div class="flex flex-col w-full sm:w-[48%]">
+								<div class="flex flex-col flex-1 gap-2 mt-5">
+									<h3 class="text-center text-xl md:text-2xl font-semibold text-gray-800 mb-2">
+										Personal Information
+									</h3>
+
+									<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+										<div>
+											<label for="name" class="block text-gray-700 font-medium mb-2">Name
+												<super class="text-red-600 text-lg font-medium">*</super>
+											</label>
+											<input type="text" id="name" name="name"
+												class="w-full p-3 md:p-4 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-4 focus:ring-blue-300"
+												required>
+										</div>
+										<div>
+											<label for="phone" class="block text-gray-700 font-medium mb-2">Phone
+												<super class="text-red-600 text-lg font-medium">*</super>
+											</label>
+											<input type="tel" id="phone" name="phone"
+												class="w-full p-3 md:p-4 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-4 focus:ring-blue-300">
+										</div>
+										<div>
+											<label for="email" class="block text-gray-700 font-medium mb-2">Email
+												<super class="text-red-600 text-lg font-medium">*</super>
+											</label>
+											<input type="email" id="email" name="email"
+												class="w-full p-3 md:p-4 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-4 focus:ring-blue-300"
+												required>
+										</div>
+										<div>
+											<label for="password" class="block text-gray-700 font-medium mb-2">Password
+												<super class="text-red-600 text-lg font-medium">*</super>
+											</label>
+											<div class="flex items-center">
+												<input type="text" id="password" name="password"
+													class="w-full p-3 md:p-4 border border-gray-300 rounded-l-lg shadow-md focus:outline-none focus:ring-4 focus:ring-blue-300"
+													placeholder="Enter password" required>
+												<button type="button" id="generatePassword"
+													class="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 py-2 md:py-3 rounded-r-lg flex items-center gap-2 hover:from-blue-600 hover:to-purple-600 shadow-md focus:outline-none focus:ring-4 focus:ring-purple-300">
+													<svg xmlns="http://www.w3.org/2000/svg" fill="none"
+														viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+														class="w-5 h-5">
+														<path stroke-linecap="round" stroke-linejoin="round"
+															d="M15.362 5.214a1.5 1.5 0 112.121 2.121L8.464 16.354a1.5 1.5 0 01-.707.393l-3.429.857.857-3.429a1.5 1.5 0 01.393-.707L15.362 5.214zM19.5 2.25v.008h.008V2.25h-.008zm-2.5 7v.008h.008V9.25h-.008zm6 2v.008h.008V11.25h-.008zm-6 6v.008h.008V17.25h-.008z" />
+													</svg>
+												</button>
+											</div>
+										</div>
+
+										<div>
+											<label for="companyName"
+												class="block text-gray-700 font-medium mb-2">Company Name
+												<super class="text-red-600 text-lg font-medium">*</super>
+											</label>
+											<input type="text" id="companyName" name="companyName"
+												class="w-full p-3 md:p-4 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-4 focus:ring-blue-300"
+												required>
+										</div>
+										<div>
+											<label for="websiteUrl" class="block text-gray-700 font-medium mb-2">Website
+												URL</label>
+											<input type="url" id="websiteUrl" name="websiteUrl"
+												class="w-full p-3 md:p-4 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-4 focus:ring-blue-300">
+										</div>
+
+										<div>
+											<label for="status" class="block text-gray-700 font-medium mb-2">Status
+												<super class="text-red-600 text-lg font-medium">*</super>
+											</label>
+											<select id="status" name="status"
+												class="w-full p-3 md:p-4 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-4 focus:ring-blue-300"
+												required>
+												<option value="" disabled selected>Advertiser Status</option>
+												<th:block th:each="type : ${entityStatus}">
+													<option th:value="${type}" th:text="${type}"></option>
+												</th:block>
+											</select>
+										</div>
+										<div>
+											<label for="paymentTerms"
+												class="block text-gray-700 font-medium mb-2">Payment Terms</label>
+											<input type="text" id="paymentTerms" name="paymentTerms"
+												class="w-full p-3 md:p-4 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-4 focus:ring-blue-300">
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div
+								class="w-1 bg-gradient-to-t from-blue-500 via-purple-500 to-pink-500 h-[calc(80vh-200px)] mt-10 mx-4 rounded-xl shadow-md animate-gradient hidden md:block">
+							</div>
+
+							<div class="flex flex-col w-full sm:w-[48%]">
+								<div class="flex-1 mt-5">
+									<h3 class="text-center text-xl md:text-2xl font-semibold text-gray-800 mb-4">
+										Address Details</h3>
+									<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+										<div>
+											<label for="address"
+												class="block text-gray-700 font-medium mb-2">Address</label>
+											<input type="text" id="address" name="address"
+												class="w-full p-3 md:p-4 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-4 focus:ring-blue-300"
+												required>
+										</div>
+										<div>
+											<label for="city" class="block text-gray-700 font-medium mb-2">City</label>
+											<input type="text" id="city" name="city"
+												class="w-full p-3 md:p-4 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-4 focus:ring-blue-300"
+												required>
+										</div>
+										<div>
+											<label for="state"
+												class="block text-gray-700 font-medium mb-2">State</label>
+											<input type="text" id="state" name="state"
+												class="w-full p-3 md:p-4 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-4 focus:ring-blue-300"
+												required>
+										</div>
+										<div>
+											<label for="country"
+												class="block text-gray-700 font-medium mb-2">Country</label>
+											<input type="text" id="country" name="country"
+												class="w-full p-3 md:p-4 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-4 focus:ring-blue-300"
+												required>
+										</div>
+									</div>
+									<div class="mt-4">
+										<label for="postalCode" class="block text-gray-700 font-medium mb-2">Postal
+											Code</label>
+										<input type="text" id="postalCode" name="postalCode"
+											class="w-full p-3 md:p-4 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-4 focus:ring-blue-300"
+											required>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="flex justify-center ">
+							<button type="submit"
+								class="w-full md:w-[200px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white py-3 md:py-4 rounded-xl hover:from-blue-600 hover:to-pink-600 shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-300 mt-4 animate-gradient">
+								Submit
+							</button>
+						</div>
+					</form>
+				</div>
+
+
+				<script>
+					document.getElementById('generatePassword').addEventListener('click', function () {
+						const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%^&*';
+						let password = '';
+						for (let i = 0; i < 12; i++) {
+							password += chars.charAt(Math.floor(Math.random() * chars.length));
+						}
+						document.getElementById('password').value = password;
+					});
+				</script>
+			</div>
+
+
+		</div>
+	</div>
+	<!-- END: Content -->
+
+	<script>
+		console.log("Create Advertiser Form ")
+	</script>
+</body>
+
+</html>

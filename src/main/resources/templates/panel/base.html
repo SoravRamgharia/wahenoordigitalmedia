@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" th:fragment="parent(content, title, script)" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="csrf-token" content="Koo2zWJKliRELq4FawEfkQPg3CJYusp6ppGFZw4O">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description"
+		content="Midone admin is super flexible, powerful, clean & modern responsive tailwind admin template with unlimited possibilities.">
+	<meta name="keywords"
+		content="admin template, midone Admin Template, dashboard template, flat admin template, responsive admin template, web app">
+	<meta name="author" content="LEFT4CODE">
+	<title data-th-replace="${title}">WDM</title>
+
+	<link rel="icon" href="img/favicon.ico" type="img/favicon.ico">
+
+	<!-- BEGIN: CSS Assets-->
+	<link rel="stylesheet" href="dist/css/vendors/tippy.css">
+	<link rel="stylesheet" href="dist/css/themes/enigma/top-nav.css">
+	<link rel="stylesheet" href="dist/css/vendors/simplebar.css">
+	<link rel="stylesheet" href="dist/css/components/mobile-menu.css">
+	<link rel="stylesheet" href="dist/css/app.css">
+	<!-- END: CSS Assets-->
+
+	<style>
+		@keyframes gradient-animation {
+			0% {
+				background-position: 0% 50%;
+			}
+
+			50% {
+				background-position: 100% 50%;
+			}
+
+			100% {
+				background-position: 0% 50%;
+			}
+		}
+
+		.animate-gradient {
+			background-size: 200% 200%;
+			animation: gradient-animation 4s ease infinite;
+		}
+	</style>
+
+</head>
+
+<body>
+
+	<div data-th-replace="~{panel/panelsetting::panelsetting}"></div>
+
+	<!-- Main Content -->
+	<main id="content">
+		<section data-th-replace="${content}"></section>
+	</main>
+
+	<script>
+		console.log("Panel Base Page")
+
+
+		document.addEventListener("DOMContentLoaded", function () {
+			// Get all the submenu links (e.g. "Create Campaign", "Campaign List")
+			const submenuLinks = document.querySelectorAll('.top-menu');
+
+			// Function to set the active link based on the current URL
+			function setActiveLink() {
+				// Get the current page URL (or path)
+				const currentUrl = window.location.pathname;
+
+				// Iterate through all the submenu links
+				submenuLinks.forEach(link => {
+					// Remove active class from all links
+					link.classList.remove('top-menu--active');
+
+					// Check if the link's href matches the current URL
+					if (link.getAttribute('href') === currentUrl) {
+						link.classList.add('top-menu--active');
+					}
+				});
+			}
+
+			// Initialize the active state on page load
+			setActiveLink();
+
+			// Add click event listener to each submenu item
+			submenuLinks.forEach(link => {
+				link.addEventListener('click', function (e) {
+					// Remove active class from all submenu links
+					submenuLinks.forEach(menuLink => menuLink.classList.remove('top-menu--active'));
+
+					// Add the active class to the clicked submenu item
+					e.currentTarget.classList.add('top-menu--active');
+				});
+			});
+
+		});
+
+
+
+
+		// messageHandler.js
+		(function () {
+			// Function to get the session message (if any)
+			function getSessionMessage() {
+				return sessionStorage.getItem("message");
+			}
+
+			// Function to display the message
+			function displayMessage(message) {
+				const messageContainer = document.getElementById("message-container");
+				if (message) {
+					messageContainer.style.display = "block";
+					messageContainer.innerText = message.content;
+					messageContainer.style.backgroundColor = message.type === 'GREEN' ? 'lightgreen' : 'lightcoral';
+				}
+			}
+
+			// After the page loads, check if there's a message in session
+			document.addEventListener("DOMContentLoaded", function () {
+				const message = getSessionMessage();
+				if (message) {
+					// Display the message (Assuming it's a JSON string)
+					displayMessage(JSON.parse(message));
+					sessionStorage.removeItem("message"); // Remove message after displaying
+				}
+			});
+
+			// Expose the function to be used in your controller if needed
+			window.setSessionMessage = function (message) {
+				sessionStorage.setItem("message", JSON.stringify(message));
+			};
+		})();
+
+
+	</script>
+	<script src="https://cdn.tailwindcss.com"></script>
+
+	<!-- BEGIN: Vendor JS Assets-->
+	<script src="dist/js/vendors/dom.js"></script>
+	<script src="dist/js/vendors/tailwind-merge.js"></script>
+	<script src="dist/js/vendors/lucide.js"></script>
+	<script src="dist/js/vendors/popper.js"></script>
+	<script src="dist/js/vendors/dropdown.js"></script>
+	<script src="dist/js/vendors/tippy.js"></script>
+	<script src="dist/js/vendors/transition.js"></script>
+	<script src="dist/js/vendors/simplebar.js"></script>
+	<script src="dist/js/vendors/modal.js"></script>
+	<script src="dist/js/components/base/theme-color.js"></script>
+	<script src="dist/js/components/base/lucide.js"></script>
+	<script src="dist/js/components/base/tippy.js"></script>
+	<script src="dist/js/components/mobile-menu.js"></script>
+	<script src="dist/js/components/themes/enigma/top-bar.js"></script>
+	<!-- END: Vendor JS Assets-->
+
+</body>
+
+</html>
