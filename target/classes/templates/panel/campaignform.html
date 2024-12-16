@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{panel/base :: parent(~{::#content},~{::title},~{::script})}">
+
+<head>
+	<title>Campaign Form</title>
+</head>
+
+<body>
+
+	<div id="content"
+		class="enigma py-5 px-5 md:py-0 sm:px-8 md:px-0 before:content-[''] before:bg-gradient-to-b before:from-theme-1 before:to-theme-2 dark:before:from-darkmode-800 dark:before:to-darkmode-800 md:before:bg-none md:bg-slate-200 md:dark:bg-darkmode-800 before:fixed before:inset-0 before:z-[-1]">
+
+		<div data-th-replace="~{panel/navbar::navbar}"></div>
+
+		<!-- BEGIN: Content -->
+		<div
+			class="max-w-full md:max-w-none rounded-[30px] md:rounded-[35px_35px_0_0] px-4 md:px-[22px] min-w-0 min-h-screen bg-slate-100 flex-1 pb-10 mt-5 relative dark:bg-darkmode-700 before:content-[''] before:w-full before:h-px before:block">
+			<!-- BEGIN: Notification -->
+			<div role="alert"
+				class="mt-5 alert relative border rounded-md px-5 py-4 bg-primary border-primary text-white dark:border-primary pl-5 pr-16 intro-y box col-span-11 mb-6 dark:border-darkmode-600">
+				<div class="flex items-center">
+					<span>
+						<i data-tw-merge="" data-lucide="info" class="stroke-1.5 mr-2 h-4 w-4"></i>
+					</span>
+					<span>Please fill in the details correctly. Mandatory fields are marked with <super
+							class="text-red-600 ml-2 text-lg font-medium">*</super></span>
+
+					<button data-tw-merge="" data-tw-dismiss="alert" type="button" aria-label="Close"
+						class="py-2 px-3 absolute right-0 my-auto mr-2 text-white"><i data-tw-merge="" data-lucide="x"
+							class="stroke-1.5 h-4 w-4"></i></button>
+				</div>
+			</div>
+			<!-- BEGIN: Notification -->
+
+			<div class="intro-y col-span-11 2xl:col-span-12">
+				<div data-th-replace="~{message::messagebox}"></div>
+				<div class="flex justify-center items-center w-full">
+					<form novalidate id="campaignForm" method="POST" action="/campaigns"
+						class="bg-white shadow-xl rounded-2xl p-6 md:p-10 w-full space-y-6">
+						<text
+							class="justify-center text-sm sm:text-base md:text-lg lg:text-xl font-bold text-white text-center px-4 py-2 flex flex-nowrap bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-xl shadow-md animate-gradient">
+							Create New Campaign
+						</text>
+
+						<!--							     CSRF Token 
+							    <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+-->
+						<!-- Campaign Name & Image -->
+						<div class="flex flex-wrap gap-6">
+							<div class="flex-1">
+								<label for="campaignName" class="text-sm font-medium text-gray-700">Campaign
+									Name</label>
+								<input type="text" id="campaignName" name="campaignName"
+									placeholder="Enter campaign name"
+									class="w-full mt-1 p-2 border rounded-md focus:ring-2 focus:ring-blue-400"
+									required />
+							</div>
+							<div class="flex-1">
+								<label for="campaignImage" class="text-sm font-medium text-gray-700">Campaign
+									Image</label>
+								<input type="url" id="campaignImage" name="campaignImage" placeholder="Enter image URL"
+									class="w-full mt-1 p-2 border rounded-md focus:ring-2 focus:ring-blue-400" />
+							</div>
+						</div>
+
+						<!-- Advertiser -->
+						<div class="flex flex-wrap gap-6 mt-4">
+							<div class="flex-1">
+								<label for="advertiser" class="text-sm font-medium text-gray-700">Advertiser</label>
+								<select id="advertiser" name="advertiserId"
+									class="w-full mt-1 p-2 border rounded-md focus:ring-2 focus:ring-blue-400" required>
+									<option value="" disabled selected>Select an Advertiser</option>
+									<th:block th:each="advertiser : ${advertisers}">
+										<option th:value="${advertiser.advertiserId}" th:text="${advertiser.name}">
+										</option>
+									</th:block>
+								</select>
+							</div>
+							<div class="flex-1">
+								<label for="campaignPreviewLink" class="text-sm font-medium text-gray-700">Campaign
+									Preview Link</label>
+								<input type="url" id="campaignPreviewLink" name="campaignPreviewLink"
+									placeholder="Enter preview link"
+									class="w-full mt-1 p-2 border rounded-md focus:ring-2 focus:ring-blue-400" />
+							</div>
+						</div>
+
+
+						<!-- Platform Type, Traffic Type, Campaign Category, Vertical Type, Channel Type, Revenue Model -->
+						<div class="flex flex-wrap gap-6 mt-4">
+							<div class="flex-1">
+								<label for="platformType" class="text-sm font-medium text-gray-700">Platform
+									Type</label>
+								<select id="platformType" name="platformType"
+									class="w-full mt-1 p-2 border rounded-md focus:ring-2 focus:ring-blue-400" required>
+									<option value="" disabled selected>Select Platform Type</option>
+									<th:block th:each="type : ${platformTypes}">
+										<option th:value="${type}" th:text="${type}"></option>
+									</th:block>
+								</select>
+							</div>
+
+							<div class="flex-1 flex items-end gap-2">
+								<div>
+									<label for="campaignCategory" class="block text-gray-700 font-medium mb-2">Campaign
+										Category</label>
+									<div class="flex items-center">
+										<!-- Campaign Category Dropdown -->
+										<select id="campaignCategory" name="categoryType"
+											onchange="updateVerticalTypes()"
+											class="w-full p-1 md:p-2 border border-gray-300 rounded-l-lg shadow-md focus:outline-none focus:ring-4 focus:ring-blue-300"
+											required>
+											<option value="" disabled selected>Select Category</option>
+											<th:block th:each="category : ${categoryTypes}">
+												<option th:value="${category.name()}" th:text="${category}">
+												</option>
+											</th:block>
+										</select>
+
+										<!-- Add New Category Button -->
+										<button type="button" id="addnewcategory"
+											class="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-2 py-2 md:py-2 rounded-r-lg flex items-center gap-2 hover:from-blue-600 hover:to-purple-600 shadow-md focus:outline-none focus:ring-4 focus:ring-purple-300">
+											<!-- Plus Icon -->
+											<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+												stroke-width="2" stroke="currentColor" class="w-5 h-5">
+												<path stroke-linecap="round" stroke-linejoin="round"
+													d="M12 5v14M5 12h14" />
+											</svg>
+										</button>
+									</div>
+								</div>
+							</div>
+
+							<div class="flex-1 flex items-end gap-2">
+								<div>
+									<label for="verticalType" class="block text-gray-700 font-medium mb-2">Vertical
+										Type</label>
+									<div class="flex items-center">
+										<select id="verticalType" name="verticalType"
+											class="w-full p-1 md:p-2 border border-gray-300 rounded-l-lg shadow-md focus:outline-none focus:ring-4 focus:ring-blue-300"
+											required>
+											<option value="" disabled selected>Select VerticalType</option>
+											<!-- Dynamic options for vertical types -->
+										</select>
+
+
+										<!-- Add New Category Button -->
+										<button type="button" id="addnewcategory"
+											class="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-2 py-2 md:py-2 rounded-r-lg flex items-center gap-2 hover:from-blue-600 hover:to-purple-600 shadow-md focus:outline-none focus:ring-4 focus:ring-purple-300">
+											<!-- Plus Icon -->
+											<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+												stroke-width="2" stroke="currentColor" class="w-5 h-5">
+												<path stroke-linecap="round" stroke-linejoin="round"
+													d="M12 5v14M5 12h14" />
+											</svg>
+										</button>
+									</div>
+								</div>
+							</div>
+
+							<div class="flex-1">
+								<label for="channelType" class="text-sm font-medium text-gray-700">Channel
+									Type</label>
+								<select id="channelType" name="channelType"
+									class="w-full mt-1 p-2 border rounded-md focus:ring-2 focus:ring-blue-400" required>
+									<option value="" disabled selected>Select Channel Type</option>
+									<th:block th:each="type : ${channelTypes}">
+										<option th:value="${type}" th:text="${type}"></option>
+									</th:block>
+								</select>
+							</div>
+
+							<div class="flex-1">
+								<label for="revenueModel" class="text-sm font-medium text-gray-700">Revenue
+									Model</label>
+								<select id="revenueModel" name="revenueModel"
+									class="w-full mt-1 p-2 border rounded-md focus:ring-2 focus:ring-blue-400" required>
+									<option value="" disabled selected>Select Revenue Model</option>
+									<th:block th:each="revenueModel : ${revenueModel}">
+										<option th:value="${revenueModel}" th:text="${revenueModel}"></option>
+									</th:block>
+								</select>
+							</div>
+						</div>
+
+						<!-- Advertiser Payout & Affiliate Payout -->
+						<div class="flex flex-wrap gap-6 mt-4">
+							<div class="flex-1">
+								<label for="advertiserPayout" class="text-sm font-medium text-gray-700">Advertiser
+									Payout</label>
+								<input type="number" id="advertiserPayout" name="advertiserPayout"
+									placeholder="Enter payout"
+									class="w-full mt-1 p-2 border rounded-md focus:ring-2 focus:ring-blue-400"
+									step="0.01" />
+							</div>
+							<div class="flex-1">
+								<label for="affiliatePayout" class="text-sm font-medium text-gray-700">Affiliate
+									Payout</label>
+								<input type="number" id="affiliatePayout" name="affiliatePayout"
+									placeholder="Enter payout"
+									class="w-full mt-1 p-2 border rounded-md focus:ring-2 focus:ring-blue-400"
+									step="0.01" />
+							</div>
+						</div>
+
+						<!-- Currency, Budget & Target Geography -->
+						<div class="flex flex-wrap gap-6 mt-4">
+							<div class="flex-1">
+								<label for="currency" class="text-sm font-medium text-gray-700">Currency</label>
+								<select id="currency" name="currency"
+									class="w-full mt-1 p-2 border rounded-md focus:ring-2 focus:ring-blue-400" required>
+									<option value="INR">INR</option>
+									<option value="USD">USD</option>
+								</select>
+							</div>
+							<div class="flex-1">
+								<label for="budget" class="text-sm font-medium text-gray-700">Budget</label>
+								<input type="number" id="budget" name="budget" placeholder="Enter budget"
+									class="w-full mt-1 p-2 border rounded-md focus:ring-2 focus:ring-blue-400"
+									step="0.01" />
+							</div>
+							<div class="flex-1">
+								<label for="targetGeography" class="text-sm font-medium text-gray-700">Target
+									Geography</label>
+								<input type="text" id="targetGeography" name="targetGeography"
+									placeholder="US, UK, Canada"
+									class="w-full mt-1 p-2 border rounded-md focus:ring-2 focus:ring-blue-400" />
+							</div>
+						</div>
+
+						<!-- Start Date, End Date & Schedule Type -->
+						<div class="flex flex-wrap gap-6 mt-4">
+							<div class="flex-1">
+								<label for="startDate" class="text-sm font-medium text-gray-700">Start
+									Date</label>
+								<input type="datetime-local" id="startDate" name="startDate"
+									class="w-full mt-1 p-2 border rounded-md focus:ring-2 focus:ring-blue-400"
+									required />
+							</div>
+							<div class="flex-1">
+								<label for="endDate" class="text-sm font-medium text-gray-700">End Date</label>
+								<input type="datetime-local" id="endDate" name="endDate"
+									class="w-full mt-1 p-2 border rounded-md focus:ring-2 focus:ring-blue-400"
+									required />
+							</div>
+
+							<div class="flex-1">
+								<label for="status" class="text-sm font-medium text-gray-700">Status</label>
+								<select id="status" name="status"
+									class="w-full mt-1 p-2 border rounded-md focus:ring-2 focus:ring-blue-400" required>
+									<option value="" disabled selected>Select Traffic Type</option>
+									<th:block th:each="type : ${entityStatus}">
+										<option th:value="${type}" th:text="${type}"></option>
+									</th:block>
+								</select>
+							</div>
+
+							<div class="flex-1">
+								<label for="scheduleType" class="text-sm font-medium text-gray-700">Schedule
+									Type</label>
+								<select id="scheduleType" name="scheduleType"
+									class="w-full mt-1 p-2 border rounded-md focus:ring-2 focus:ring-blue-400" required>
+									<option value="continuous">Continuous</option>
+									<option value="daily">Daily Start/Stop</option>
+								</select>
+							</div>
+						</div>
+
+						<!-- Campaign Description -->
+						<div class="mt-4">
+							<label for="campaignDescription" class="text-sm font-medium text-gray-700">Campaign
+								Description</label>
+							<textarea id="campaignDescription" name="campaignDescription" rows="4"
+								placeholder="Describe the campaign"
+								class="w-full mt-1 p-2 border rounded-md focus:ring-2 focus:ring-blue-400"></textarea>
+						</div>
+
+						<!-- Submit Button -->
+						<div class="text-center mt-4">
+							<button type="submit"
+								class="px-5 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white font-medium rounded-md shadow-lg hover:from-purple-600 hover:to-blue-600 focus:ring-2 focus:ring-blue-300">
+								Create Campaign
+							</button>
+						</div>
+					</form>
+
+				</div>
+			</div>
+		</div>
+
+
+		<script>
+			function updateVerticalTypes() {
+				fetch(`/getverticaltypes?categoryType=${document.getElementById("campaignCategory").value}`)
+					.then(response => response.json())
+					.then(data => {
+						const verticalDropdown = document.getElementById("verticalType");
+						verticalDropdown.innerHTML = '<option>Select Vertical Type</option>'; // Reset dropdown
+						data.forEach(v => verticalDropdown.add(new Option(v, v)));
+					})
+					.catch(console.error);
+			}
+
+			document.getElementById('campaignForm').addEventListener('submit', function (event) {
+				event.preventDefault(); // Prevent the default form submission
+
+				// Create an object to hold the form data
+				const formData = new FormData(event.target);
+				const data = {};
+
+				formData.forEach((value, key) => {
+					data[key] = value;
+				});
+
+				// Send the form data as JSON to the backend
+				fetch('/campaigns', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify(data), // Serialize the data as JSON
+				})
+					.then(response => response.json())
+					.then(data => {
+						console.log('Campaign created successfully:', data);
+					})
+					.catch(error => {
+						console.error('Error creating campaign:', error);
+					});
+			});
+		</script>
+	</div>
+</body>
+
+</html>
