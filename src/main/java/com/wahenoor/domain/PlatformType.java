@@ -4,12 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum PlatformType {
-	WEBSITE("Website"), 
-	MOBILEAPP("Mobile App"), 
-	SOCIAL("Social Media"), 
-	EMAIL("Email"), 
-	SEARCH("Search Engine"), 
-	AFFILIATENETWORKS("AffiliateNetworks"); 
+	WEBSITE("Website"), MOBILEAPP("Mobile App"), EMAIL("Email");
 
 	private final String displayName;
 

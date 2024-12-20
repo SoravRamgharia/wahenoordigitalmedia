@@ -1,9 +1,10 @@
 package com.wahenoor.domain;
 
 public enum RevenueModel {
-	CPC("Cost Per Click"), // Pay per ad click
+	AIP("Application in Progress"), CPD("Cost per Dispatch"), CPC("Cost Per Click"), // Pay per ad click
 	CPA("Cost Per Acquisition"), // Pay per specific action (purchase, etc.)
 	CPL("Cost Per Lead"), // Pay per lead generated
+	CPVL("Cost Per Verify Lead"), // Pay per lead generated
 	CPM("Cost Per Mille (Thousand Impressions)"), // Pay per 1,000 ad impressions
 	CPS("Cost Per Sale"), // Pay per each sale generated
 	CPI("Cost Per Install"), // Pay per app installation
@@ -26,13 +27,17 @@ public enum RevenueModel {
 
 	// Industry-Specific Models
 	CPMF("Cost Per Form Fill"), // Pay per completed form (e.g., surveys)
-	CPLQ("Cost Per Qualified Lead"), // Pay for leads meeting specific qualifications
+	CPQL("Cost Per Qualified Lead"), // Pay for leads meeting specific qualifications
+	CPIL("Cost Per Interested Lead"), // Pay for leads meeting specific qualifications
 	CPVM("Cost Per Video Mille"), // Pay per 1,000 video views
 	CPPU("Cost Per Paying User"), // Pay per user who completes payment
+	DOI("Double Opt-In"), // Pay per user who completes payment
+	SOI("Single Opt-In"), // Pay per user who completes payment
 
 	// Hybrid Models
 	Hybrid_CPC_CPA("Hybrid Cost Per Click and Acquisition"), // Mixed model combining clicks and actions
-	Hybrid_CPM_CPA("Hybrid Cost Per Mille and Acquisition"); // Mixed model combining impressions and actions
+	Hybrid_CPM_CPA("Hybrid Cost Per Mille and Acquisition"), // Mixed model combining impressions and actions
+	CP_INSPECTION("CP_INSPECTION"), CP_SCHEDULE("CP_SCHEDULE"), CP_VISIT("CP_VISIT"), CP_DEMO("CP_DEMO");
 
 	private final String displayName;
 

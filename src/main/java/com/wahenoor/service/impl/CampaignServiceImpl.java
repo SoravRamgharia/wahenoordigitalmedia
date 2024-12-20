@@ -146,12 +146,13 @@ public class CampaignServiceImpl implements CampaignService {
 
 				campaign.setRevenueModel(RevenueModel.valueOf(getStringValue(row.getCell(2))));
 				campaign.setPlatformType(PlatformType.valueOf(getStringValue(row.getCell(3))));
-				campaign.setCategoryType(CategoryType.valueOf(getStringValue(row.getCell(4))));
-				campaign.setVerticalType(VerticalType.valueOf(getStringValue(row.getCell(5))));
+				campaign.setCategoryType(getStringValue(row.getCell(4)));
+//				campaign.setVerticalType(VerticalType.valueOf(getStringValue(row.getCell(5))));
+				campaign.setVerticalType(getStringValue(row.getCell(5)));
 				campaign.setChannelType(ChannelType.valueOf(getStringValue(row.getCell(6))));
 				campaign.setTargetGeography(getStringValue(row.getCell(7)));
-				campaign.setAdvertiserPayout(getBigDecimalValue(row.getCell(8)));
-				campaign.setAffiliatePayout(getBigDecimalValue(row.getCell(9)));
+				campaign.setAdvertiserPayout(getStringValue(row.getCell(8)));
+				campaign.setAffiliatePayout(getStringValue(row.getCell(9)));
 				campaign.setBudget(getBigDecimalValue(row.getCell(10)));
 				campaign.setStatus(CampaignStatus.valueOf(getStringValue(row.getCell(11))));
 				campaign.setCampaignDescription(getStringValue(row.getCell(12)));
@@ -254,4 +255,31 @@ public class CampaignServiceImpl implements CampaignService {
 
 		return CampaignMapper.toDtoList(campaigns);
 	}
+
+	public List<String> getGeoTarget() {
+		List<String> geoTarget = campaignRepository.findAllDistinctTargetGeographies();
+		return geoTarget;
+	}
+
+	public Page<Campaign> getFilteredCampaigns(String platformType, String revenueModel, String categoryType,
+			String geoTarget, Pageable pageable) {
+
+		PlatformType platformTypeEnum = (platformType != null && !platformType.isEmpty())
+				? PlatformType.valueOf(platformType)
+				: null;
+		RevenueModel revModelEnum = (revenueModel != null && !revenueModel.isEmpty())
+				? RevenueModel.valueOf(revenueModel)
+				: null;
+		CategoryType catTypeEnum = (categoryType != null && !categoryType.isEmpty())
+				? CategoryType.valueOf(categoryType)
+				: null;
+		geoTarget = (geoTarget != null && !geoTarget.isEmpty()) ? geoTarget : null;
+
+		return campaignRepository.findFilteredCampaigns(platformTypeEnum, revModelEnum, catTypeEnum, geoTarget,
+				pageable);
+//		return campaignRepository
+//				.findFilteredCampaigns(platformTypeEnum, revModelEnum, catTypeEnum, geoTarget, pageable)
+//				.map(CampaignMapper::toDto); // Map Campaign entities to DTOs
+	}
+
 }

@@ -1,16 +1,11 @@
 package com.wahenoor.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
-
-import java.time.LocalTime;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +21,6 @@ public class PingScheduler {
 	private static final Logger logger = LoggerFactory.getLogger(PingScheduler.class);
 
 	// Constructor Injection
-	@Autowired
 	public PingScheduler(@Lazy RestTemplate restTemplate) {
 		this.restTemplate = restTemplate;
 	}

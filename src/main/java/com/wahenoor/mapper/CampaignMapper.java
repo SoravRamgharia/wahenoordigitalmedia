@@ -26,8 +26,8 @@ public class CampaignMapper {
 		campaign.setCampaignPreviewLink(dto.getCampaignPreviewLink());
 		campaign.setPlatformType(PlatformType.valueOf(dto.getPlatformType()));
 //		campaign.setTrafficType(TrafficType.valueOf(dto.getTrafficType()));
-		campaign.setCategoryType(CategoryType.valueOf(dto.getCategoryType()));
-		campaign.setVerticalType(VerticalType.valueOf(dto.getVerticalType()));
+		campaign.setCategoryType(dto.getCategoryType());
+		campaign.setVerticalType(dto.getVerticalType());
 		campaign.setChannelType(ChannelType.valueOf(dto.getChannelType()));
 		campaign.setTargetGeography(dto.getTargetGeography());
 		campaign.setRevenueModel(RevenueModel.valueOf(dto.getRevenueModel()));
@@ -54,8 +54,8 @@ public class CampaignMapper {
 		dto.setCampaignPreviewLink(campaign.getCampaignPreviewLink());
 		dto.setPlatformType(campaign.getPlatformType().name());
 //		dto.setTrafficType(campaign.getTrafficType() != null ? campaign.getTrafficType().name() : null);
-		dto.setCategoryType(campaign.getCategoryType().name());
-		dto.setVerticalType(campaign.getVerticalType().name());
+		dto.setCategoryType(campaign.getCategoryType());
+		dto.setVerticalType(campaign.getVerticalType());
 		dto.setChannelType(campaign.getChannelType().name());
 		dto.setTargetGeography(campaign.getTargetGeography());
 		dto.setRevenueModel(campaign.getRevenueModel().name());
@@ -87,8 +87,8 @@ public class CampaignMapper {
 		// Update enum fields by converting string values to corresponding enum types
 		entity.setPlatformType(PlatformType.valueOf(dto.getPlatformType()));
 //		entity.setTrafficType(TrafficType.valueOf(dto.getTrafficType()));
-		entity.setCategoryType(CategoryType.valueOf(dto.getCategoryType()));
-		entity.setVerticalType(VerticalType.valueOf(dto.getVerticalType()));
+		entity.setCategoryType(dto.getCategoryType());
+		entity.setVerticalType(dto.getVerticalType());
 		entity.setChannelType(ChannelType.valueOf(dto.getChannelType()));
 		entity.setRevenueModel(RevenueModel.valueOf(dto.getRevenueModel()));
 		entity.setStatus(CampaignStatus.valueOf(dto.getStatus()));

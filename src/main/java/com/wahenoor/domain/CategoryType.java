@@ -7,7 +7,10 @@ public enum CategoryType {
 	FOOD_BEVERAGE("Food & Beverage"), GAMING("Gaming & Esports"), SPORTS_OUTDOORS("Sports & Outdoor Activities"),
 	PETS("Pets & Animal Care"), BUSINESS_SERVICES("Business & Professional Services"),
 	BEAUTY_CARE("Beauty & Personal Care"), CHARITY_NONPROFIT("Charity & Nonprofit"),
-	EVENTS_HOSPITALITY("Events & Hospitality");
+	EVENTS_HOSPITALITY("Events & Hospitality"), TELECOM("Telecom"), INSURANCE("Insurance"),
+	AUTOMOBILE("Automobile"), HOME_IMPROVEMENT("Home Improvement"), REAL_ESTATE("Real Property"),
+	HEALTH_CARE("HEALTH_CARE")
+	;
 
 	private final String displayName;
 

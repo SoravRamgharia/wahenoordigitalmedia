@@ -45,9 +45,10 @@ public class Campaign {
 
 	// A broad classification that groups affiliate campaigns into general subject
 	// areas or industries.
-	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
-	private CategoryType categoryType;
+	private String categoryType;
+//	@Enumerated(EnumType.STRING)
+//	@Column(nullable = false)
+//	private CategoryType categoryType;
 
 //	@ManyToOne
 //	@JoinColumn(name = "category_id", nullable = false)
@@ -55,9 +56,11 @@ public class Campaign {
 
 	// A more specialized niche within Category(or subCategory of Campaign),
 	// focusing on a specific target market or product.
-	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
-	private VerticalType verticalType;
+	private String verticalType;
+
+//	@Enumerated(EnumType.STRING)
+//	@Column(nullable = false)
+//	private VerticalType verticalType;
 
 //	Describes how traffic is sourced and categorized based on origin.
 //	Advertisers analyze TrafficTypes to understand the quality and intent of the audience, focusing on conversion optimization.
@@ -73,19 +76,22 @@ public class Campaign {
 	@Column(name = "target_geography")
 	private String targetGeography;
 
-//	@Enumerated(EnumType.STRING)
-//	@Column(precision = 10, scale = 2, nullable = false)
-//	private RevenueModel revenueModel;
-
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private RevenueModel revenueModel;
 
-	@Column(name = "advertiser_payout", precision = 10, scale = 0, nullable = false)
-	private BigDecimal advertiserPayout;
+//	@Column(name = "advertiser_payout", precision = 10, scale = 0, nullable = false)
+//	private BigDecimal advertiserPayout;
+//
+//	@Column(name = "affiliate_payout", precision = 10, scale = 0, nullable = false)
+//	private BigDecimal affiliatePayout;
 
-	@Column(name = "affiliate_payout", precision = 10, scale = 0, nullable = false)
-	private BigDecimal affiliatePayout;
+// rs(%), slab, numberic
+	@Column(name = "advertiser_payout", nullable = false)
+	private String advertiserPayout;
+
+	@Column(name = "affiliate_payout", nullable = false)
+	private String affiliatePayout;
 
 	@Column(name = "budget", precision = 15, scale = 0, nullable = false)
 	private BigDecimal budget;

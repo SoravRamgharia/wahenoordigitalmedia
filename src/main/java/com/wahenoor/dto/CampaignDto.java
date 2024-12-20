@@ -28,9 +28,9 @@ public class CampaignDto {
 	@NotNull
 	private String revenueModel;
 	@NotNull
-	private BigDecimal advertiserPayout;
+	private String advertiserPayout;
 	@NotNull
-	private BigDecimal affiliatePayout;
+	private String affiliatePayout;
 //	@NotNull
 	private BigDecimal budget;
 //	@NotNull

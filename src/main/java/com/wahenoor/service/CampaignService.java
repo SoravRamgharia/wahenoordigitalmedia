@@ -29,6 +29,11 @@ public interface CampaignService {
 
 	void importExcelToCampaign(File excelFile);
 
+	public List<String> getGeoTarget();
+
 	List<CampaignDto> searchByType(String type, String value);
+
+	public Page<Campaign> getFilteredCampaigns(String platformType, String revenueModel, String categoryType,
+			String geoTarget, Pageable pageable);
 
 }

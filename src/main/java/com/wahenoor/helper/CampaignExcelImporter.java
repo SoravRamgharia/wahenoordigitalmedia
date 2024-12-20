@@ -51,12 +51,13 @@ public class CampaignExcelImporter {
 		campaign.setCampaignName(getCellValueAsString(row.getCell(0)));
 		campaign.setRevenueModel(RevenueModel.valueOf(getCellValueAsString(row.getCell(1))));
 		campaign.setPlatformType(PlatformType.valueOf(getCellValueAsString(row.getCell(2))));
-		campaign.setCategoryType(CategoryType.valueOf(getCellValueAsString(row.getCell(3))));
-		campaign.setVerticalType(VerticalType.valueOf(getCellValueAsString(row.getCell(4))));
+		campaign.setCategoryType(getCellValueAsString(row.getCell(3)));
+//		campaign.setVerticalType(VerticalType.valueOf(getCellValueAsString(row.getCell(4))));
+		campaign.setVerticalType(getCellValueAsString(row.getCell(4)));
 		campaign.setChannelType(ChannelType.valueOf(getCellValueAsString(row.getCell(5))));
 		campaign.setTargetGeography(getCellValueAsString(row.getCell(6)));
-		campaign.setAdvertiserPayout(getCellValueAsBigDecimal(row.getCell(7)));
-		campaign.setAffiliatePayout(getCellValueAsBigDecimal(row.getCell(8)));
+		campaign.setAdvertiserPayout(getCellValueAsString(row.getCell(7)));
+		campaign.setAffiliatePayout(getCellValueAsString(row.getCell(8)));
 		campaign.setBudget(getCellValueAsBigDecimal(row.getCell(9)));
 		campaign.setStatus(CampaignStatus.valueOf(getCellValueAsString(row.getCell(10))));
 		campaign.setCampaignDescription(getCellValueAsString(row.getCell(11)));

@@ -86,7 +86,8 @@
 	</div>
 
 	<div>
-		<div data-th-replace="~{headercarousel :: headercarousel}"></div>
+		<div id="header-carousel" data-th-replace="~{headercarousel :: headercarousel}"></div>
+
 	</div>
 
 	<!-- Main Content -->
@@ -121,6 +122,10 @@
 	<script>
 		console.log("Campaigns Page");
 
+		if (window.location.pathname === '/campaigns') {
+		      document.getElementById('header-carousel').style.display = 'none';
+		  }
+		  
 		document.addEventListener("DOMContentLoaded", function () {
 		       lucide.createIcons();
 		   });

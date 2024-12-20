@@ -45,6 +45,7 @@ com\wahenoor\service\CampaignService.class
 com\wahenoor\Repository\TransactionRepository.class
 com\wahenoor\service\impl\AffiliateServiceImpl.class
 com\wahenoor\WahenoorDigitalMediaApplication.class
+com\wahenoor\config\AppConfig.class
 com\wahenoor\Entity\Report$ReportBuilder.class
 com\wahenoor\domain\CampaignStatus.class
 com\wahenoor\controller\AffiliateController.class

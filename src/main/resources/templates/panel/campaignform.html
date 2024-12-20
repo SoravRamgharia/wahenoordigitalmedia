@@ -108,7 +108,7 @@
 										Category</label>
 									<div class="flex items-center">
 										<!-- Campaign Category Dropdown -->
-										<select id="campaignCategory" name="categoryType"
+										<!--										<select id="campaignCategory" name="categoryType"
 											onchange="updateVerticalTypes()"
 											class="w-full p-1 md:p-2 border border-gray-300 rounded-l-lg shadow-md focus:outline-none focus:ring-4 focus:ring-blue-300"
 											required>
@@ -118,6 +118,11 @@
 												</option>
 											</th:block>
 										</select>
+-->
+										<input type="text" id="categoryType" name="categoryType"
+											placeholder="categoryType"
+											class="w-full mt-1 p-2 border rounded-md focus:ring-2 focus:ring-blue-400"
+											step="0.01" />
 
 										<!-- Add New Category Button -->
 										<button type="button" id="addnewcategory"
@@ -138,12 +143,17 @@
 									<label for="verticalType" class="block text-gray-700 font-medium mb-2">Vertical
 										Type</label>
 									<div class="flex items-center">
+										<!--	
 										<select id="verticalType" name="verticalType"
 											class="w-full p-1 md:p-2 border border-gray-300 rounded-l-lg shadow-md focus:outline-none focus:ring-4 focus:ring-blue-300"
 											required>
 											<option value="" disabled selected>Select VerticalType</option>
-											<!-- Dynamic options for vertical types -->
 										</select>
+-->
+										<input type="text" id="verticalType" name="verticalType"
+											placeholder="VerticalType"
+											class="w-full mt-1 p-2 border rounded-md focus:ring-2 focus:ring-blue-400"
+											step="0.01" />
 
 
 										<!-- Add New Category Button -->
@@ -289,9 +299,28 @@
 				</div>
 			</div>
 		</div>
-
-
+		
 		<script>
+			document.getElementById("campaignForm").addEventListener("submit", function(event) {
+			    event.preventDefault();
+			    const formData = new FormData(this);
+			    const jsonData = Object.fromEntries(formData.entries());
+			    
+			    fetch('/campaigns', {
+			        method: 'POST',
+			        headers: {
+			            'Content-Type': 'application/json'
+			        },
+			        body: JSON.stringify(jsonData)
+			    })
+			    .then(response => response.json())
+			    .then(data => console.log(data))
+			    .catch(error => console.error(error));
+			});
+
+		</script>
+
+		<!--		<script>
 			function updateVerticalTypes() {
 				fetch(`/getverticaltypes?categoryType=${document.getElementById("campaignCategory").value}`)
 					.then(response => response.json())
@@ -331,6 +360,7 @@
 					});
 			});
 		</script>
+-->
 	</div>
 </body>
 

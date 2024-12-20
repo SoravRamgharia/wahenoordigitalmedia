@@ -118,7 +118,9 @@ public class CampaignController {
 	}
 
 	@PostMapping("/campaigns")
-	public String createCampaign(@RequestBody @Valid CampaignDto campaignDto, HttpSession session) {
+	public String createCampaign(@ModelAttribute @Valid CampaignDto campaignDto, HttpSession session) {
+		System.out.println(campaignDto.toString());
+		// Process the campaignDto object
 		CampaignDto createdCampaign = campaignService.createCampaign(campaignDto);
 
 		Message message = Message.builder().content("Your New Campaign is Successfully Created :)")
@@ -158,36 +160,85 @@ public class CampaignController {
 		return ResponseEntity.ok(campaignDtos);
 	}
 
+//	@GetMapping("/campaigns")
+//	public String getAllCampaigns(@RequestParam(defaultValue = "0") int page,
+//			@RequestParam(defaultValue = "10") int size, Model model) {
+//
+//		// Create Pageable instance with page and size
+//		Pageable pageable = PageRequest.of(page, size);
+//
+//		// Fetch the paginated list of advertisers
+//		Page<Campaign> pageContent = campaignService.getAllCampaigns(pageable);
+//
+//		// Get total number of advertisers for pagination control
+//		long count = campaignService.getCampaignCount();
+//
+//		int totalPages = pageContent.getTotalPages();
+//		int currentPage = pageContent.getNumber();
+//		int pageWindow = 5; // How many pages to display in the pagination window
+//
+//		int startPage = Math.max(1, currentPage - (pageWindow / 2));
+//		int endPage = Math.min(totalPages, currentPage + (pageWindow / 2));
+//
+//		// Ensure there are always 5 pages displayed, adjusting start or end if
+//		// necessary
+//		if (endPage - startPage + 1 < pageWindow) {
+//			if (startPage == 1) {
+//				endPage = Math.min(pageWindow, totalPages);
+//			} else if (endPage == totalPages) {
+//				startPage = Math.max(1, totalPages - pageWindow + 1);
+//			}
+//		}
+//
+//		model.addAttribute("startPage", startPage);
+//		model.addAttribute("endPage", endPage);
+//		model.addAttribute("totalPages", totalPages);
+//		model.addAttribute("currentPage", currentPage);
+//		model.addAttribute("pageContent", pageContent);
+//		model.addAttribute("pageSize", size); // Add the current page size to the model
+//
+//		// Add attributes to the model
+//		model.addAttribute("campaigns", pageContent.getContent());
+//		model.addAttribute("campaignCount", count);
+//		model.addAttribute("currentPage", page);
+//		model.addAttribute("totalPages", pageContent.getTotalPages());
+//		model.addAttribute("pageSize", size);
+//
+//		model.addAttribute("platformTypes", PlatformType.values());
+//		model.addAttribute("revenueModel", RevenueModel.values());
+//		model.addAttribute("categoryTypes", CategoryType.values());
+//		model.addAttribute("entityStatus", EntityStatus.values());
+//		model.addAttribute("geoTargets", campaignService.getGeoTarget());
+//
+//		return "campaigns"; // Return the view name
+//	}
+
 	@GetMapping("/campaigns")
 	public String getAllCampaigns(@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "5") int size, Model model) {
+			@RequestParam(defaultValue = "10") int size, @RequestParam(required = false) String platformType,
+			@RequestParam(required = false) String revenueModel, @RequestParam(required = false) String categoryType,
+			@RequestParam(required = false) String geoTarget, Model model) {
 
-		// Create Pageable instance with page and size
+		System.out.println("platformType: " + platformType);
+		System.out.println("revenueModel: " + revenueModel);
+		System.out.println("categoryType: " + categoryType);
+		System.out.println("geoTarget: " + geoTarget);
+
+		// Create a Pageable instance
 		Pageable pageable = PageRequest.of(page, size);
 
-		// Fetch the paginated list of advertisers
-		Page<Campaign> pageContent = campaignService.getAllCampaigns(pageable);
+		// Fetch filtered campaigns
+		Page<Campaign> pageContent = campaignService.getFilteredCampaigns(platformType, revenueModel, categoryType,
+				geoTarget, pageable);
 
-//		System.out.println("This--------->");
-//		System.out.println(pageContent.getNumber());
-//		System.out.println(pageContent.getNumberOfElements());
-//		System.out.println(pageContent.getSize());
-//		System.out.println(pageContent.getTotalElements());
-//		System.out.println(pageContent.getTotalPages());
-//		System.out.println(pageContent.hasContent());
-
-		// Get total number of advertisers for pagination control
-		long count = campaignService.getCampaignCount();
-
+		// Prepare pagination variables
+		long count = pageContent.getTotalElements();
 		int totalPages = pageContent.getTotalPages();
 		int currentPage = pageContent.getNumber();
-		int pageWindow = 5; // How many pages to display in the pagination window
+		int pageWindow = 5;
 
 		int startPage = Math.max(1, currentPage - (pageWindow / 2));
 		int endPage = Math.min(totalPages, currentPage + (pageWindow / 2));
-
-		// Ensure there are always 5 pages displayed, adjusting start or end if
-		// necessary
 		if (endPage - startPage + 1 < pageWindow) {
 			if (startPage == 1) {
 				endPage = Math.min(pageWindow, totalPages);
@@ -196,21 +247,22 @@ public class CampaignController {
 			}
 		}
 
+		// Add pagination and filter details to model
 		model.addAttribute("startPage", startPage);
 		model.addAttribute("endPage", endPage);
 		model.addAttribute("totalPages", totalPages);
 		model.addAttribute("currentPage", currentPage);
 		model.addAttribute("pageContent", pageContent);
-		model.addAttribute("pageSize", size); // Add the current page size to the model
-
-		// Add attributes to the model
 		model.addAttribute("campaigns", pageContent.getContent());
 		model.addAttribute("campaignCount", count);
-		model.addAttribute("currentPage", page);
-		model.addAttribute("totalPages", pageContent.getTotalPages());
-		model.addAttribute("pageSize", size);
 
-		return "campaigns"; // Return the view name
+		// Add filter options
+		model.addAttribute("platformTypes", PlatformType.values());
+		model.addAttribute("revenueModel", RevenueModel.values());
+		model.addAttribute("categoryTypes", CategoryType.values());
+		model.addAttribute("geoTargets", campaignService.getGeoTarget());
+
+		return "campaigns";
 	}
 
 	@GetMapping("/campaignlistjson")
@@ -225,7 +277,7 @@ public class CampaignController {
 
 	@GetMapping("/campaignlist")
 	public String getAllCampaignList(@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "5") int size, Model model) {
+			@RequestParam(defaultValue = "10") int size, Model model) {
 
 		// Create Pageable instance with page and size
 		Pageable pageable = PageRequest.of(page, size);
